@@ -1,54 +1,50 @@
 package com.mcajamarca.juegoconway;
 
 public enum Célula {
+		
+	VIVA {
+	    @Override
+	    public Célula evalúaCélula(int vecinoVivos) {
+	    	return (vecinoVivos ==  2 || vecinoVivos == 3) ? VIVA: MUERTA;
+	    }
+	}, MUERTA {
+	      @Override
+	      public Célula evalúaCélula(int vecinoVivos) {
+	    	  return vecinoVivos == 3 ? VIVA: MUERTA; 		
+	      }
+	};
 	
-	VIVA ("*"),
-	MUERTA (".");
+	private static final char PIXEL_VIVA   = '*';
+    private static final char PIXEL_MUERTA = '.';
+    
+	public abstract Célula evalúaCélula(int vecinoVivos);
 	
-	private String pixel;
-	
-	private Célula(String pixel) {
-		this.pixel = pixel;
-	}	
-	
-	public String getPixel() {
-		return pixel;
+	public static Célula equivale(char pixel){
+		Célula célula = Célula.MUERTA;
+		switch (pixel) {
+    	case PIXEL_VIVA:
+    		célula = Célula.VIVA;
+    		break;
+        case PIXEL_MUERTA:
+        	célula = Célula.MUERTA;
+        	break;
+        default:
+        	célula = Célula.MUERTA;
+        }
+		return célula;		
+	}
+	   
+	public String toString() {
+		StringBuilder pixel = new StringBuilder();
+		switch (this) {
+	    	case VIVA:
+	    		pixel.append(PIXEL_VIVA);
+	    		break;
+	        case MUERTA:
+	        	pixel.append(PIXEL_MUERTA);
+	        	break;
+	        }
+	        return pixel.toString();
+	    }
 	}
 
-	public static Célula evaléaCélula(int numeroCélulasVivas, Célula célula){		 
-		if (célula.equals(VIVA)){
-			return (numeroCélulasVivas ==  2 || numeroCélulasVivas == 3) ? VIVA: MUERTA;
-		}else{
-			return numeroCélulasVivas == 3 ? VIVA: MUERTA; 			
-		}
-	}
-	
-	public static Célula equivale(String pixel){
-		Célula [] células = Célula.values();
-   	  	for(Célula célula :células){    	  
-   	  		if(célula.getPixel().equals(pixel)){
-   	  			return célula;
-   	  		}    	  
-   	  	}
-		throw new IllegalArgumentException();
-	}
-	
-	public static int  célulasVévas(int x, int y, Célula [][] tablero){
-		int contadorCélulasVévas = 0;
-		int[] dx = {-1,-1,-1, 0, 0, 1, 1, 1};
-		int[] dy = {-1, 0, 1,-1, 1,-1, 0, 1};
-		for (int i = 0; i < 8; ++i) {
-		   int nx = x + dx[i];
-		   int ny = y + dy[i];
-		   try {
-			   if (tablero[nx][ny] == Célula.VIVA){
-				   contadorCélulasVévas += 1;
-			   }			
-		   } catch (Exception e) {
-			  // e.printStackTrace();
-			  // System.out.println("nx:" + nx + " ny: " + ny);
-		   }
-		}
-		return contadorCélulasVévas;
-	}
-}

@@ -3,10 +3,10 @@ package com.mcajamarca.juegoconway;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class Main {
-	//Path path = Paths.get("src/com/mcajamarca/juegoconway/conway.txt");
 	private Path path;
 	private List<String> plano ;
 	private int filas;
@@ -45,13 +45,18 @@ public class Main {
 		}
 	}
 	
-	private void iniciarJuego(){
+	public void iniciarJuego(){
 		Tablero tablero = new Tablero(mundoInicial);    	
 		for (int i = 1; i <= generaciones ; ++i) {
 			System.out.println(tablero.toString());    		
-			Tablero tableroFuturo = new Tablero(tablero.tableroFuturo()); 
+			Tablero tableroFuturo = tablero.tableroFuturo(); 
 			tablero = tableroFuturo;
+		}
 	}
+	
+	public static void main (String [] args){
+		Path plano = Paths.get("src/com/mcajamarca/juegoconway/conway.txt");
+		new Main(plano);
 	}
     
 }
