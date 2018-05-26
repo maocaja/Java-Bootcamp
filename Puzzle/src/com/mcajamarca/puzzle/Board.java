@@ -6,7 +6,6 @@ import java.util.Map;
 public final class Board {
 	// posición es una clase interna
 	private int size;
-	// valor, posición
 	private Map<Position,Tile> board = new HashMap<Position,Tile>();
 	
 	public Board(int size, int[] numbers) {
@@ -21,11 +20,42 @@ public final class Board {
 	}
 	
 	public String toString() {
-		StringBuilder boardString = new StringBuilder();
-		Position position = Position.of(0, 0);
-		Tile tile = board.get(position);
-		System.out.println(tile.getValue());
-		boardString.append(board.size() + " tile:" + tile.getValue());
-		return boardString.toString();
+		   StringBuilder builder = new StringBuilder();
+		   for (int i = 0; i < 1 ;++i) {
+		      for (int j = 0; j < 1; ++j) {
+		         Position position = Position.of(i, j);
+		         builder.append(board.get(position));
+		      }
+		      builder.append(String.format("%n"));
+		   }
+		   return builder.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((board == null) ? 0 : board.hashCode());
+		result = prime * result + size;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Board other = (Board) obj;
+		if (board == null) {
+			if (other.board != null)
+				return false;
+		} else if (!board.equals(other.board))
+			return false;
+		if (size != other.size)
+			return false;
+		return true;
 	}
 }
