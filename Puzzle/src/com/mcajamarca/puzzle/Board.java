@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class Board {
-	// posición es una clase interna
 	private int size;
 	private Map<Position,Tile> board = new HashMap<Position,Tile>();
 	
@@ -12,19 +11,61 @@ public final class Board {
 		this.size = size;
 		fillBoard(numbers);
 	}
-
+	
 	private void fillBoard(int[] numbers) {
-		Position position = Position.of(0, 0);
-		Tile tile = Tile.of(1);
-		board.put(position,tile);
+		int index = 0;
+		for (int indexRow = 0; indexRow < this.size; ++indexRow) {
+			for (int indexCol = 0; indexCol < this.size; ++indexCol) {
+				board.put(Position.of(indexRow,indexCol),Tile.of(numbers[index]));
+				++index;
+			}
+		}
+	}
+
+	private Position seachPositionOfValue(int value) {
+		for(int indexRow = 0 ; indexRow < this.size; ++indexRow ){
+			for(int indexCol = 0 ; indexCol < this.size; ++indexCol){
+				Position position = Position.of(indexRow, indexCol);
+				if (board.get(position).getValue() == value){
+					return position;
+				}
+			}
+		}
+		return Utility.EMPTY_POSITION;
 	}
 	
+	public Board solve(int value) {
+		Position valuePosition = seachPositionOfValue(value);
+		Position zeroPosition = seachPositionOfValue(0);
+		return searchAround(valuePosition,zeroPosition);
+	}
+	
+	private void move(Position valuePosition, Position zeroPosition){
+         Tile tile = board.get(valuePosition);
+         Tile zeroTile = board.get(zeroPosition);
+         board.put(zeroPosition, tile);
+         board.put(valuePosition, zeroTile);
+	}
+	private Board searchAround(Position valuePosition, Position zeroPosition) {
+		
+		for (int index = 0; index < this.size; ++index) {
+			Position goalPosition = Position.of(valuePosition.getX() + Utility.ROW[index], 
+					                            valuePosition.getY() + Utility.COLUMN[index]);
+			if (goalPosition.isSafe() && goalPosition.equals(zeroPosition)){
+				move(goalPosition, goalPosition);
+				break;
+			}
+        }
+		return this;
+	}
+	
+
 	public String toString() {
 		   StringBuilder builder = new StringBuilder();
-		   for (int i = 0; i < 1 ;++i) {
-		      for (int j = 0; j < 1; ++j) {
+		   for (int i = 0; i < this.size ;++i) {
+		      for (int j = 0; j < this.size; ++j) {
 		         Position position = Position.of(i, j);
-		         builder.append(board.get(position));
+		         builder.append(board.get(position).getValue() < 10 ? board.get(position).getValue() + "  ": board.get(position).getValue() + " ");
 		      }
 		      builder.append(String.format("%n"));
 		   }
