@@ -52,13 +52,38 @@ public final class Board {
 			Position goalPosition = Position.of(valuePosition.getX() + Utility.ROW[index], 
 					                            valuePosition.getY() + Utility.COLUMN[index]);
 			if (goalPosition.isSafe() && goalPosition.equals(zeroPosition)){
-				move(goalPosition, goalPosition);
+				move(valuePosition, goalPosition);
 				break;
 			}
         }
 		return this;
 	}
 	
+	public boolean isSolvable() {
+		int count = 0;
+		int[] numbers = convertMapToArray();
+		for (int i = 0; i < numbers.length - 1; i++) {
+			for (int j = i + 1; j < numbers.length; j++) {
+				if (numbers[i] != 0 && numbers[j] != 0 && numbers[i] > numbers[j]) {
+						count++;
+					}
+				}
+			}
+		return count % 2 == 0;
+	}
+
+	private int[] convertMapToArray() {
+		int [] numbers = new int [this.size * this.size];
+		int index = 0;
+		for(int indexRow = 0 ; indexRow < this.size; ++indexRow ){
+			for(int indexCol = 0 ; indexCol < this.size; ++indexCol){
+				Position position = Position.of(indexRow, indexCol);
+				numbers[index] = board.get(position).getValue();
+				++index;
+			}
+		}
+		return numbers;
+	}
 
 	public String toString() {
 		   StringBuilder builder = new StringBuilder();
