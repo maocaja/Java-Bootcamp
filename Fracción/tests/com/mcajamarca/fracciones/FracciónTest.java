@@ -3,7 +3,6 @@ package com.mcajamarca.fracciones;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
-
 import org.junit.Test;
 
 import com.mcajamarca.fracción.Fracción;
