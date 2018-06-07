@@ -12,7 +12,7 @@ public final class NúmeroSecreto {
 		}else if(PicasYFijas.tieneNúmerosRepetidos(númeroSecreto)){
 			throw new IllegalArgumentException("El número no puede tener dígitos repetidos");
 		}
-		this.númeroSecreto = PicasYFijas.convertirToArreglo(númeroSecreto);
+		this.númeroSecreto = PicasYFijas.convertirAArreglo(númeroSecreto);
 	}
 	
 	public NúmeroSecreto() {
@@ -20,7 +20,7 @@ public final class NúmeroSecreto {
 	}
 	
 	public int picas(String númeroRetador) {
-		String [] arregloNúmeroRetador = PicasYFijas.convertirToArreglo(númeroRetador);
+		String [] arregloNúmeroRetador = PicasYFijas.convertirAArreglo(númeroRetador);
 		int picas = 0;
 		for (int i = 0; i < this.númeroSecreto.length; i++) {
 			for (int j = 0; j < arregloNúmeroRetador.length; j++) {
@@ -33,7 +33,7 @@ public final class NúmeroSecreto {
 	}
 	
 	public int fijas(String númeroRetador) {
-		String [] arregloNúmeroRetador = PicasYFijas.convertirToArreglo(númeroRetador);
+		String [] arregloNúmeroRetador = PicasYFijas.convertirAArreglo(númeroRetador);
 		int fijas = 0;
 		for (int i = 0; i < this.númeroSecreto.length; i++) {
 			if (this.númeroSecreto[i].equals(arregloNúmeroRetador[i])){
@@ -44,7 +44,7 @@ public final class NúmeroSecreto {
 	}
 	
 	public String getNúmeroSecreto() {
-		return PicasYFijas.convertirToString(númeroSecreto);
+		return PicasYFijas.convertirACadena(númeroSecreto);
 	}
 
 	@Override
