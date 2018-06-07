@@ -5,8 +5,8 @@ import java.util.Random;
 public final class PicasYFijas {
 	
 	public static int TAMAÑO_NÚMERO_SECRETO = 4; 
-    public static String [] NÚMEROS = {"0","1","2","3","4","5","6","7","8","9"};
-    public static int NUMERO_DE_INTENTOS = 6;
+	public static String [] NÚMEROS = {"0","1","2","3","4","5","6","7","8","9"};
+	public static int NUMERO_DE_INTENTOS = 6;
     
 	public PicasYFijas() {
 		throw new AssertionError("Ésta clase no se debe instanciar");
@@ -25,10 +25,10 @@ public final class PicasYFijas {
 	}
 	
 	public static String[] barajar (String número) {
-    	return barajar(convertirToArreglo(número));
+    	return barajar(convertirAArreglo(número));
 	}
    
-	public static String[] convertirToArreglo(String número) {
+	public static String[] convertirAArreglo(String número) {
 	    String[] arreglo = new String[número.length()];
 	    for(int indice = 0; indice < número.length(); ++ indice){
 	        arreglo[indice] = String.valueOf(número.charAt(indice));
@@ -36,7 +36,7 @@ public final class PicasYFijas {
 	    return arreglo;
 	}
 	
-	public static String convertirToString(String[] número) {
+	public static String convertirACadena(String[] número) {
 		StringBuilder builder = new StringBuilder();
 	    for(int indice = 0; indice < número.length; ++ indice){
 	    	builder.append(número[indice]);

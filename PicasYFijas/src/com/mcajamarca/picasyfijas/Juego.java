@@ -21,6 +21,9 @@ public final class Juego {
 				System.out.println("Intento: " + intento.toString());
 				System.out.println("fijas: " + menteMaestra.fijas(intento.toString()));
 				System.out.println("picas: " + menteMaestra.picas(intento.toString()));
+				if(menteMaestra.picas(intento.toString())== PicasYFijas.TAMAÑO_NÚMERO_SECRETO){
+					break;
+				}
 		    } catch (IOException e) {
 				e.printStackTrace();
 		    } 
