@@ -1,6 +1,6 @@
 package com.majamarca.puzzle;
 
-public class Position {
+public final class Position {
 	
 	private final int x;
 	private final int y;
@@ -15,22 +15,9 @@ public class Position {
 	}
 	
 	public boolean isNeighbor(Position other){
-		
-		boolean isXNeighbor = false;
-		boolean isYNeighbor = false;
-		
-		isXNeighbor = (this.x == other.x) && Math.abs(other.y - this.y) == 1 ? true : false;
-		isYNeighbor = (this.y == other.y) && Math.abs(other.x - this.x) == 1 ? true : false;
-
+		boolean isXNeighbor = (this.x == other.x) && Math.abs(other.y - this.y) == 1;
+		boolean isYNeighbor = (this.y == other.y) && Math.abs(other.x - this.x) == 1;
 		return isXNeighbor || isYNeighbor;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
 	}
 
 	@Override
@@ -60,8 +47,16 @@ public class Position {
 	
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("x:" + this.x + " y:" + this.y);
-		return builder.toString();
+		   return String.format("(%d, %d)", this.x, this.y);
 	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	
 }

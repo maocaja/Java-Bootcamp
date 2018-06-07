@@ -2,7 +2,6 @@ package com.majamarca.puzzle;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public final class Board {
 	
@@ -11,29 +10,30 @@ public final class Board {
 	
 	public Board(int [][] board){
 		this.size = board.length;
-		validateArray(board);
+		assert validateThatTheBoardIsSquare(board) : "La matriz no es cuadrada por favor validar";
 		traverseArray(board);
-		validateArrayByValue(board, Tile.EMPTY_VALUE);
-		fillHashMap(board);
+		assert validateThatThereAreNoRepeatedNumbers(board, Tile.empty().getValue()): "La matriz tiene números repetidos, por favor validar";
+		fillMap(board);
 	}
 	
-	private void validateArray(int[][] board) {
+	private boolean validateThatTheBoardIsSquare(int[][] board) {
 		for (int indexX = 0; indexX < board.length; indexX++) {
 			if (board[indexX].length != board.length){
-				throw new AssertionError("La matriz no es cuadrada, por favor validar");
+				return false;
 			}
 		}
+		return true;
 	}
 	
 	private void traverseArray(int[][] board) {
 		for (int indexX = 0; indexX < board.length; indexX++) {
 			for (int indexY = 0; indexY < board[indexX].length; indexY++) {
-				validateArrayByValue(board,board[indexX][indexY]);
+				validateThatThereAreNoRepeatedNumbers(board,board[indexX][indexY]);
 			}
 		}
 	}
 	
-	private void validateArrayByValue(int[][] board, int value){
+	private boolean validateThatThereAreNoRepeatedNumbers(int[][] board, int value){
 		int count = 0;
 		for (int indexX = 0; indexX < board.length; indexX++) {
 			for (int indexY = 0; indexY < board[indexX].length; indexY++) {
@@ -43,13 +43,15 @@ public final class Board {
 		}
 		
 		if (count > 1){
-			throw new AssertionError("El valor " + value + " se repite, por favor validar");
+			return false;//throw new AssertionError("El valor " + value + " se repite, por favor validar");
 		}else if (count == 0){
-			throw new AssertionError("El valor " + value + " no existe, por favor validar");
+			return false;//throw new AssertionError("El valor " + value + " no existe, por favor validar");
+		}else{
+			return true;
 		}
 	}
 	
-	private void fillHashMap(int[][] board) {
+	private void fillMap(int[][] board) {
 		for (int indexX = 0; indexX < board.length; indexX++) {
 			for (int indexY = 0; indexY < board[indexX].length; indexY++) {
 				Position position = Position.of(indexX, indexY);
@@ -59,7 +61,7 @@ public final class Board {
 		}
 	}
 	
-	private int [][] convertHashMapToArray(){
+	private int [][] converMapToArray(){
 		int [][] printBoard = new int [this.size][this.size];
 		for (int index = 0; index < this.board.size(); index++) {
 			Position position = this.board.get(Tile.of(index));
@@ -77,12 +79,12 @@ public final class Board {
 	
 	private void move(Position valuePosition, Position zeroPosition, int value){
         board.put(Tile.of(value),zeroPosition);
-        board.put(Tile.of(Tile.EMPTY_VALUE),valuePosition);
+        board.put(Tile.empty(),valuePosition);
 	}
 	
 	public Board solve(int value) {
 		Position valuePosition = seachPositionOfValue(value);
-		Position zeroPosition = seachPositionOfValue(Tile.EMPTY_VALUE);
+		Position zeroPosition = seachPositionOfValue(Tile.empty().getValue());
 		if (valuePosition.isNeighbor(zeroPosition)){
 			move(valuePosition,zeroPosition,value);
 		}
@@ -91,32 +93,13 @@ public final class Board {
 	
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		for (int [] row : convertHashMapToArray()) {
+		for (int [] row : converMapToArray()) {
 			for (int value : row) {
 				builder.append(String.format("%-3s",value));
 			}
 			builder.append(String.format("%n"));
 		}
 		return builder.toString();
-	}
-	
-	@SuppressWarnings("resource")
-	public static void main(String[] args) {
-		int [][] initialArrayBoard = { {1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 0, 11 }, {13, 14, 15, 12}};
-		int [][] goalArrayBoard    = { {1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 0 }};
-		Board board = new Board(initialArrayBoard);
-		Board goalBoard = new Board(goalArrayBoard);
-		System.out.println(board.toString());
-		while(!board.toString().equals(goalBoard.toString())){
-			Scanner keyboard = new Scanner(System.in);
-			System.out.println("Digite casilla que desea mover");
-			int num = keyboard.nextInt();
-			Board newBoard = board.solve(num);
-			if (newBoard.toString().equals(board.toString())){
-				System.out.println("La casilla, " + num + " no se puede mover");
-			}
-			System.out.println(board.toString());
-		}
 	}
 }
 
