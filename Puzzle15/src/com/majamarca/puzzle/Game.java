@@ -11,7 +11,7 @@ public class Game {
 	}
 	
 	public void play(){
-		Board board = new Board(this.goalBoard);
+		Board board = Board.shufflingOf(this.goalBoard);
 		System.out.println(board.toString());
 		while(!board.isSorted()){
 			try {
