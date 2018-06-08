@@ -5,15 +5,17 @@ import java.util.Map;
 
 public final class Board {
 	
-	private final Map<Tile,Position> board = new HashMap<>();
+	private final Map<Tile,Position> tilesBoard = new HashMap<>();
+	private final Map<Position,Tile> positionBoard = new HashMap<>();
+	private final Map<Tile,Position> goalBoard = new HashMap<>();
+	private final int MOVEMENTS_TO_SHUFFLE = 10;
 	private final int size;
 	
 	public Board(int [][] board){
 		this.size = board.length;
 		assert validateThatTheBoardIsSquare(board) : "La matriz no es cuadrada por favor validar";
-		traverseArray(board);
-		assert validateThatThereAreNoRepeatedNumbers(board, Tile.empty().getValue()): "La matriz tiene números repetidos, por favor validar";
-		fillMap(board);
+		fillMaps(board);
+		shuffleMaps();
 	}
 	
 	private boolean validateThatTheBoardIsSquare(int[][] board) {
@@ -25,82 +27,121 @@ public final class Board {
 		return true;
 	}
 	
-	private void traverseArray(int[][] board) {
-		for (int indexX = 0; indexX < board.length; indexX++) {
-			for (int indexY = 0; indexY < board[indexX].length; indexY++) {
-				validateThatThereAreNoRepeatedNumbers(board,board[indexX][indexY]);
-			}
-		}
-	}
-	
-	private boolean validateThatThereAreNoRepeatedNumbers(int[][] board, int value){
-		int count = 0;
-		for (int indexX = 0; indexX < board.length; indexX++) {
-			for (int indexY = 0; indexY < board[indexX].length; indexY++) {
-				if (board[indexX][indexY] == value)
-					++count;
-			}
-		}
-		
-		if (count > 1){
-			return false;//throw new AssertionError("El valor " + value + " se repite, por favor validar");
-		}else if (count == 0){
-			return false;//throw new AssertionError("El valor " + value + " no existe, por favor validar");
-		}else{
-			return true;
-		}
-	}
-	
-	private void fillMap(int[][] board) {
+	private void fillMaps(int[][] board) {
 		for (int indexX = 0; indexX < board.length; indexX++) {
 			for (int indexY = 0; indexY < board[indexX].length; indexY++) {
 				Position position = Position.of(indexX, indexY);
 				Tile tile = Tile.of(board[indexX][indexY]);
-				this.board.put(tile, position);
+				goalBoard.put(tile, position);
+				setMaps(position, tile);
 			}
 		}
 	}
 	
-	private int [][] converMapToArray(){
-		int [][] printBoard = new int [this.size][this.size];
-		for (int index = 0; index < this.board.size(); index++) {
-			Position position = this.board.get(Tile.of(index));
-			printBoard[position.getX()][position.getY()] = Tile.of(index).getValue(); 		
-		}
-		return printBoard;
+	private void setMaps(Position position, Tile tile) {
+		this.tilesBoard.put(tile, position);
+		this.positionBoard.put(position, tile);
 	}
 	
-	private Position seachPositionOfValue(int value) {
-		if (board.containsKey(Tile.of(value)))
-			return board.get(Tile.of(value));
+	private Position seachPositionByValue(Tile tile) {
+		if (tilesBoard.containsKey(tile))
+			return tilesBoard.get(tile);
 		else
 			throw new AssertionError("El valor digitado no existe en el tablero, por favor validar");
 	}
 	
-	private void move(Position valuePosition, Position zeroPosition, int value){
-        board.put(Tile.of(value),zeroPosition);
-        board.put(Tile.empty(),valuePosition);
+	private Tile searchTileByPosition(Position position){
+		if (positionBoard.containsKey(position))
+			return positionBoard.get(position);
+		else
+			throw new AssertionError("El valor digitado no existe en el tablero, por favor validar");
 	}
 	
-	public Board solve(int value) {
-		Position valuePosition = seachPositionOfValue(value);
-		Position zeroPosition = seachPositionOfValue(Tile.empty().getValue());
-		if (valuePosition.isNeighbor(zeroPosition)){
-			move(valuePosition,zeroPosition,value);
+	private void shuffleMaps() {
+		int count = 1;
+		while(count < MOVEMENTS_TO_SHUFFLE){
+			Position zeroPosition  = seachPositionByValue(Tile.empty());
+			Position neighborPosition = zeroPosition.searchNeighborPosition();
+			if(neighborPosition.isSafe(this.size)){
+				Tile tile = searchTileByPosition(neighborPosition);
+				move(neighborPosition, zeroPosition, tile);
+				++count;
+			}
 		}
-		return this;
+	}
+
+	private void move(Position valuePosition, Position zeroPosition, Tile tile){
+        setMaps(zeroPosition, tile);
+        setMaps(valuePosition, Tile.empty());
 	}
 	
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		for (int [] row : converMapToArray()) {
-			for (int value : row) {
-				builder.append(String.format("%-3s",value));
+		for (int indexX = 0; indexX < 4; indexX++) {
+			for (int indexY = 0; indexY < 4; indexY++) {
+				Position position = Position.of(indexX, indexY);
+				builder.append(String.format("%-3s",positionBoard.get(position).toString()));
 			}
 			builder.append(String.format("%n"));
 		}
 		return builder.toString();
 	}
+	
+	public Board solve(int value) {
+		Position valuePosition = seachPositionByValue(Tile.of(value));
+		Position zeroPosition  = seachPositionByValue(Tile.empty());
+		if (valuePosition.isNeighbor(zeroPosition)){
+			move(valuePosition,zeroPosition,Tile.of(value));
+		}else{
+			throw new AssertionError("El valor digitado no se puede mover en el tablero, por favor validar");
+		}
+		return this;
+	}
+	
+	public boolean isSorted(){
+		return tilesBoard.equals(goalBoard);
+	}	
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + MOVEMENTS_TO_SHUFFLE;
+		result = prime * result + ((goalBoard == null) ? 0 : goalBoard.hashCode());
+		result = prime * result + ((positionBoard == null) ? 0 : positionBoard.hashCode());
+		result = prime * result + size;
+		result = prime * result + ((tilesBoard == null) ? 0 : tilesBoard.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Board other = (Board) obj;
+		if (MOVEMENTS_TO_SHUFFLE != other.MOVEMENTS_TO_SHUFFLE)
+			return false;
+		if (goalBoard == null) {
+			if (other.goalBoard != null)
+				return false;
+		} else if (!goalBoard.equals(other.goalBoard))
+			return false;
+		if (positionBoard == null) {
+			if (other.positionBoard != null)
+				return false;
+		} else if (!positionBoard.equals(other.positionBoard))
+			return false;
+		if (size != other.size)
+			return false;
+		if (tilesBoard == null) {
+			if (other.tilesBoard != null)
+				return false;
+		} else if (!tilesBoard.equals(other.tilesBoard))
+			return false;
+		return true;
+	}
 }
-
-

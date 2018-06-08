@@ -19,6 +19,17 @@ public final class Position {
 		boolean isYNeighbor = (this.y == other.y) && Math.abs(other.x - this.x) == 1;
 		return isXNeighbor || isYNeighbor;
 	}
+	
+	public Position searchNeighborPosition() {
+		int[] row    = { 1,  0, -1, 0 };
+		int[] col    = { 0, -1,  0, 1 };
+		int index = (int)(Math.random() * ((3 - 0) + 1)) + 0;
+		return Position.of(this.x + row[index], this.y + col[index]);
+	}
+	
+	public boolean isSafe(int size) {
+		return (this.x >= 0 && x < size && this.y >= 0 && y < size);
+	}
 
 	@Override
 	public int hashCode() {
@@ -47,7 +58,7 @@ public final class Position {
 	
 	@Override
 	public String toString() {
-		   return String.format("(%d, %d)", this.x, this.y);
+		return String.format("(%d, %d)", this.x, this.y);
 	}
 
 	public int getX() {

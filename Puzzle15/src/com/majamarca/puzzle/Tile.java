@@ -51,6 +51,6 @@ public final class Tile {
 
 	@Override
 	public String toString() {
-		return "Tile [value=" + value + "]";
+		return String.format("%d", this.value);
 	}
 }
