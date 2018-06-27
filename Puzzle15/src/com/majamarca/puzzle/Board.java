@@ -22,10 +22,10 @@ public final class Board {
 		return new Board(board);
 	}
 	
-	public static Board shufflingOf (int [][] boardX){
-		Board board = new Board(boardX);
-		board.shuffleMaps();
-		return board;
+	public static Board shufflingOf (int [][] board){
+		Board shuffleBoard = new Board(board);
+		shuffleBoard.shuffleMaps();
+		return shuffleBoard;
 	}
 	
 	private boolean validateThatTheBoardIsSquare(int[][] board) {
